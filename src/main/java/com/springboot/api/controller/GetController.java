@@ -1,7 +1,8 @@
-package com.springboot.api.contoller;
+package com.springboot.api.controller;
 
 import java.util.Map;
 
+import org.slf4j.*;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,13 +12,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.springboot.api.dto.MemberDto;
 
+
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+
 @RestController
 @RequestMapping("/api/v1/get-api")
 public class GetController {
+
+    private final Logger LOGGER = LoggerFactory.getLogger(GetController.class);
     //@RequestMapping으로 구현하기
     //http://localhost:8080/api/v1/get-api/hello
     @RequestMapping(value = "/hello", method = RequestMethod.GET)
     public String getHello() {
+        LOGGER.info("getHello 메소드가 호출되었습니다.");
         return "Hello World";
     }
     //매개변수가 없는 GET메소드 구현
@@ -30,6 +38,7 @@ public class GetController {
     //http://localhost:8080/api/v1/get-api/variable1/{String 값}
     @GetMapping(value = "/variable1/{variable}")
     public String getVariable1(@PathVariable String variable) {
+        LOGGER.info("@Pathvariable을 통해 들어온 값 : {}", variable);
         return variable;
     }
     //규칙: @GetMapping 어노테이션 값으로 URL을 입력할 때 중괄호를 사용해 어느 위치에서 값을 받을지 지정해야한다.
@@ -46,11 +55,12 @@ public class GetController {
     //@RequestParam을 활용한 GET메소드 구현
     //URI에서 '?'를 기준으로 우측에 '{키}={값}'
     //http://localhost:8080/api/v1/get-api/request1?name=value1&email=value2&organization=value3
+    @ApiOperation(value = "GET 메소드 예제", notes = "@RequestParam을 활용한 GET Method")//Swagger 사용 어노테이션
     @GetMapping(value = "/request1")
     public String getRequestParam1(
-        @RequestParam String name,
-        @RequestParam String email,
-        @RequestParam String organization
+       @ApiParam(value = "이름", required = true) @RequestParam String name,/*@ApiParam => Swagger 사용 어노테이션*/
+       @ApiParam(value = "이메일", required = true) @RequestParam String email,
+       @ApiParam(value = "회사", required = true) @RequestParam String organization
     ) {
         return name + " " + email + " " + organization;
     }
